@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-color: #fafbfe;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --surface: #ffffff;
+    --surface-border: #e2e8f0;
+    --accent-primary: #6366f1;
+    /* Indigo/Purple */
+    --accent-hover: #4f46e5;
+  }
+
+  html.lenis {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    @apply antialiased bg-[#fafbfe] text-[#1e293b] overflow-x-hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Soft Light Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white border border-[#e2e8f0] shadow-[0_4px_20px_-4px_#0000000D] rounded-2xl;
+  }
+
+  /* ResumeUp dashed border style */
+  .dashed-panel {
+    @apply bg-white border-2 border-dashed border-[#e2e8f0] rounded-2xl transition-all duration-300 hover:border-[#6366f1] hover:bg-[#fafbfe];
+  }
+
+  .primary-button {
+    @apply bg-[#6366f1] hover:bg-[#4f46e5] text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-[0_4px_12px_#6366f14D] hover:shadow-[0_6px_16px_#6366f166] flex items-center justify-center;
+  }
+
+  .secondary-button {
+    @apply bg-white hover:bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] px-6 py-2.5 rounded-xl font-medium transition-all flex items-center justify-center;
+  }
+
+  /* Accessible motion - prefers reduced motion fallback */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* 3D Perspective Utils */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+}
