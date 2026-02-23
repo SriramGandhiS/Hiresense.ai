@@ -22,14 +22,36 @@ const uploadResume = async (req, res, next) => {
             mimeType: mimeType
         });
 
-        // Save to DB
-        const resume = await Resume.create({
-            userId,
-            originalFileName,
-            extractedText,
-            score: analysisResults.score,
-            analysis: analysisResults.detailedAnalysis
-        });
+        // Save to DB (Only if connected)
+        const mongoose = require('mongoose');
+        let resume;
+        const isDbConnected = mongoose.connection.readyState === 1;
+
+        if (isDbConnected) {
+            resume = await Resume.create({
+                userId,
+                originalFileName,
+                extractedText,
+                score: analysisResults.score,
+                analysis: analysisResults.detailedAnalysis
+            });
+        } else {
+            console.warn('Resume Upload: Database OFFLINE. Returning transient analysis results.');
+            resume = {
+                userId,
+                originalFileName,
+                extractedText,
+                score: analysisResults.score,
+                analysis: analysisResults.detailedAnalysis,
+                _doc: {
+                    userId,
+                    originalFileName,
+                    score: analysisResults.score,
+                    analysis: analysisResults.detailedAnalysis,
+                    createdAt: new Date().toISOString()
+                }
+            };
+        }
 
         // Delete temp file
         fs.unlink(filePath, (err) => {
@@ -38,9 +60,9 @@ const uploadResume = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'Resume uploaded and analyzed successfully.',
+            message: isDbConnected ? 'Resume uploaded and analyzed successfully.' : 'Resume analyzed efficiently (Guest Mode).',
             data: {
-                ...resume._doc,
+                ...(resume._doc || resume),
                 summary: analysisResults.summary
             }
         });

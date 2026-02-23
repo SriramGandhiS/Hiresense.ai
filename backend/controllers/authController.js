@@ -64,25 +64,44 @@ const googleLogin = async (req, res, next) => {
 
         console.log('Auth: Profile retrieved for', email, '- syncing with database...');
         let user;
-        try {
-            user = await User.findOne({ googleId });
+        const isDbConnected = mongoose.connection.readyState === 1;
 
-            if (!user) {
-                console.log('Auth: Creating new user record');
-                user = await User.create({
-                    googleId,
-                    email,
+        try {
+            if (isDbConnected) {
+                user = await User.findOne({ googleId });
+
+                if (!user) {
+                    console.log('Auth: Creating new user record');
+                    user = await User.create({
+                        googleId,
+                        email,
+                        name,
+                        picture
+                    });
+                }
+            } else {
+                console.warn('Auth: Database OFFLINE. Proceeding with Temporary Guest Session for', email);
+                // Create a temporary user object that mirrors the model structure
+                user = {
+                    _id: 'guest_' + googleId,
                     name,
+                    email,
                     picture
-                });
+                };
             }
         } catch (dbError) {
             console.error('Auth Database Error:', dbError.message);
-            return res.status(500).json({ message: 'Database Connection Error', error: dbError.message });
+            // Fallback to guest mode even on error to prevent blocking the user
+            user = {
+                _id: 'guest_' + googleId,
+                name,
+                email,
+                picture
+            };
         }
 
         const token = generateToken(user._id);
-        console.log('Auth: Login Success for', email);
+        console.log('Auth: Login Success (Mode: ' + (isDbConnected ? 'Permanent' : 'Guest') + ') for', email);
 
         res.status(200).json({
             user: {
