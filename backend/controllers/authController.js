@@ -14,51 +14,75 @@ const googleLogin = async (req, res, next) => {
     const { credential } = req.body;
     try {
         if (!credential) {
+            console.error('Auth Error: No credential provided');
             return res.status(400).json({ message: 'No Google credential provided' });
         }
 
+        console.log('Auth: Received credential, identifying flow...');
         let googleId, email, name, picture;
 
-        // Check if credential is a JWT (id_token) or an opaque access_token
-        if (credential.split('.').length === 3) {
-            const ticket = await client.verifyIdToken({
-                idToken: credential,
-                audience: process.env.GOOGLE_CLIENT_ID,
-            });
-            const payload = ticket.getPayload();
-            googleId = payload.sub;
-            email = payload.email;
-            name = payload.name;
-            picture = payload.picture;
-        } else {
-            // It is an access_token from the React implicit flow
-            const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: { Authorization: `Bearer ${credential}` }
-            });
+        try {
+            // Check if credential is a JWT (id_token) or an opaque access_token
+            if (credential.split('.').length === 3) {
+                console.log('Auth: Using ID Token verification flow');
+                const ticket = await client.verifyIdToken({
+                    idToken: credential,
+                    audience: process.env.GOOGLE_CLIENT_ID,
+                });
+                const payload = ticket.getPayload();
+                googleId = payload.sub;
+                email = payload.email;
+                name = payload.name;
+                picture = payload.picture;
+            } else {
+                console.log('Auth: Using Access Token userinfo flow');
+                // It is an access_token from the React implicit flow
+                const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${credential}` }
+                });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch user profile using access token');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Auth UserInfo Error:', errorText);
+                    throw new Error('Failed to fetch user profile using access token');
+                }
+
+                const payload = await response.json();
+                googleId = payload.sub;
+                email = payload.email;
+                name = payload.name;
+                picture = payload.picture;
             }
-
-            const payload = await response.json();
-            googleId = payload.sub;
-            email = payload.email;
-            name = payload.name;
-            picture = payload.picture;
+        } catch (verifyError) {
+            console.error('Auth Verification CRITICAL Error:', verifyError.message);
+            return res.status(401).json({
+                message: 'Google Token Verification Failed',
+                error: verifyError.message,
+                client_id_used: process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Missing'
+            });
         }
 
-        let user = await User.findOne({ googleId });
+        console.log('Auth: Profile retrieved for', email, '- syncing with database...');
+        let user;
+        try {
+            user = await User.findOne({ googleId });
 
-        if (!user) {
-            user = await User.create({
-                googleId,
-                email,
-                name,
-                picture
-            });
+            if (!user) {
+                console.log('Auth: Creating new user record');
+                user = await User.create({
+                    googleId,
+                    email,
+                    name,
+                    picture
+                });
+            }
+        } catch (dbError) {
+            console.error('Auth Database Error:', dbError.message);
+            return res.status(500).json({ message: 'Database Connection Error', error: dbError.message });
         }
 
         const token = generateToken(user._id);
+        console.log('Auth: Login Success for', email);
 
         res.status(200).json({
             user: {
@@ -70,7 +94,8 @@ const googleLogin = async (req, res, next) => {
             token
         });
     } catch (error) {
-        next(error);
+        console.error('Auth General Error:', error);
+        res.status(500).json({ message: 'Internal Server Error during Authentication', error: error.message });
     }
 };
 

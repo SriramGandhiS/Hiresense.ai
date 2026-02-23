@@ -51,9 +51,15 @@ if (process.env.NODE_ENV !== 'production') {
         });
 } else {
     // In production (Vercel), connect to MongoDB without app.listen
-    mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    }).then(() => console.log('MongoDB Connected (Production)'))
-        .catch(err => console.error('MongoDB Connection Error:', err));
+    if (!process.env.MONGO_URI) {
+        console.error('CRITICAL: MONGO_URI is not defined in production environment!');
+        // Fallback to local string just for startup safety, though it won't work in Vercel
+        mongoose.connect('mongodb://127.0.0.1:27017/hiresense-fallback').catch(() => { });
+    } else {
+        mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        }).then(() => console.log('MongoDB Connected (Production)'))
+            .catch(err => console.error('MongoDB Connection Error:', err));
+    }
 }

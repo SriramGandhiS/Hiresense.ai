@@ -22,8 +22,10 @@ const Login = () => {
             navigate('/dashboard');
 
         } catch (err) {
-            setError('Google Authentication Failed. Please try again.');
-            console.error(err);
+            const errorMessage = err.response?.data?.message || 'Google Authentication Failed.';
+            const detailedError = err.response?.data?.error || '';
+            setError(`${errorMessage} ${detailedError ? `(${detailedError})` : 'Please try again.'}`);
+            console.error('Login Error:', err);
         } finally {
             setLoading(false);
         }
