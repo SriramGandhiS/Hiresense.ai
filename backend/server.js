@@ -31,18 +31,29 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+// Export for Vercel
+module.exports = app;
 
-mongoose
-    .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hiresense-v2')
-    .then(() => {
-        console.log('MongoDB Connected');
-        app.listen(PORT, () => {
-            console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-            console.log(`AI Intelligence: ${process.env.GEMINI_API_KEY ? 'ENABLED (Key Detected)' : 'DISABLED (Key Missing)'}`);
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 5000;
+    mongoose
+        .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hiresense-v2')
+        .then(() => {
+            console.log('MongoDB Connected');
+            app.listen(PORT, () => {
+                console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+                console.log(`AI Intelligence: ${process.env.GEMINI_API_KEY ? 'ENABLED (Key Detected)' : 'DISABLED (Key Missing)'}`);
+            });
+        })
+        .catch((error) => {
+            console.log(`Error: ${error.message}`);
+            process.exit(1);
         });
-    })
-    .catch((error) => {
-        console.log(`Error: ${error.message}`);
-        process.exit(1);
-    });
+} else {
+    // In production (Vercel), connect to MongoDB without app.listen
+    mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }).then(() => console.log('MongoDB Connected (Production)'))
+        .catch(err => console.error('MongoDB Connection Error:', err));
+}
