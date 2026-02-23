@@ -118,4 +118,49 @@ const googleLogin = async (req, res, next) => {
     }
 };
 
-module.exports = { googleLogin };
+const login = async (req, res, next) => {
+    const { email, password } = req.body;
+    try {
+        console.log('Auth: Manual login attempt for', email);
+
+        // CASE-INSENSITIVE Hardcoded Admin Fallback
+        const isAdmin = email && email.toLowerCase() === 'sriram.dev' && password === '1234';
+
+        if (isAdmin) {
+            console.log('Auth: ADMIN Portal Access via hardcoded credentials');
+            const guestUser = {
+                _id: 'admin_sriram_dev',
+                name: 'Sriram Developer',
+                email: 'Sriram.dev',
+                picture: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+            };
+            const token = generateToken(guestUser._id);
+
+            return res.status(200).json({
+                user: guestUser,
+                token,
+                message: 'Admin Access Granted (Portal Mode)'
+            });
+        }
+
+        // Standard DB Login Logic (If DB is connected)
+        const isDbConnected = mongoose.connection.readyState === 1;
+        if (isDbConnected) {
+            const User = require('../models/User'); // Ensure model is available
+            const user = await User.findOne({ email });
+            // Note: Since user didn't specify password logic for normal users, we'll keep it simple or just return 401
+            if (!user) {
+                return res.status(401).json({ message: 'Invalid credentials or user not found' });
+            }
+            // For now, only Sriram.dev has manual access as requested
+            return res.status(401).json({ message: 'Manual login restricted to Admin portal' });
+        }
+
+        return res.status(401).json({ message: 'Database Offline - Manual Login Restricted' });
+    } catch (error) {
+        console.error('Manual Login Error:', error);
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+};
+
+module.exports = { googleLogin, login };
