@@ -9,51 +9,51 @@ const Dashboard = () => {
     const modules = [
         {
             title: "Resume Intelligence",
-            description: "AI-powered analysis and optimization for your CV against standard ATS systems.",
-            icon: <Brain className="w-8 h-8 text-indigo-600 mb-4" />,
-            color: "bg-indigo-50 border-indigo-100",
+            description: "AI-powered analysis of your CV architecture for ATS compliance.",
+            icon: <Brain className="w-10 h-10 text-indigo-600 mb-6" />,
             link: "/resume"
         },
         {
-            title: "Company Assessment",
-            description: "Research and analyze target companies to align your profile with their core values.",
-            icon: <Building2 className="w-8 h-8 text-emerald-600 mb-4" />,
-            color: "bg-emerald-50 border-emerald-100",
+            title: "Company Research",
+            description: "Deep-dive into corporate DNA and core values alignment.",
+            icon: <Building2 className="w-10 h-10 text-teal-600 mb-6" />,
             link: "/company"
         },
         {
             title: "Mock Interview",
-            description: "Practice your interview skills with our AI proctor in a timed, realistic environment.",
-            icon: <Video className="w-8 h-8 text-rose-600 mb-4" />,
-            color: "bg-rose-50 border-rose-100",
+            description: "Simulated high-pressure protocols with AI-driven proctoring.",
+            icon: <Video className="w-10 h-10 text-indigo-500 mb-6" />,
             link: "/mock-interview/setup"
         },
         {
-            title: "Performance History",
-            description: "Track your past scores, improvement metrics, and overall candidate rating.",
-            icon: <Activity className="w-8 h-8 text-amber-600 mb-4" />,
-            color: "bg-amber-50 border-amber-100",
+            title: "Performance Metrics",
+            description: "Track your trajectory with real-time telemetry and history.",
+            icon: <Activity className="w-10 h-10 text-slate-600 mb-6" />,
             link: "/performance"
         }
     ];
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
-            <header>
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Welcome back, {user?.name?.split(' ')[0] || 'User'}!</h1>
-                <p className="text-slate-500 mt-2 text-lg">Select a module below to begin your preparation journey.</p>
+        <div className="space-y-10 pb-12">
+            <header className="relative">
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                    Welcome back, <span className="text-indigo-600 font-black">{user?.name?.split(' ')[0] || 'Member'}</span>!
+                </h1>
+                <p className="text-gray-500 mt-1 text-base">Select a module below to advance your preparation journey.</p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {modules.map((mod, index) => (
-                    <Link to={mod.link} key={index} className={`relative p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg bg-white ${mod.color.replace('bg-', 'hover:bg-').split(' ')[0]}`}>
-                        {mod.icon}
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">{mod.title}</h3>
-                        <p className="text-slate-500 font-medium leading-relaxed mb-6">{mod.description}</p>
+                    <Link to={mod.link} key={index} className="premium-card p-10 group relative flex flex-col justify-between hover:bg-white active:scale-[0.98]">
+                        <div>
+                            {mod.icon}
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{mod.title}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed mb-8">{mod.description}</p>
+                        </div>
 
-                        <div className="flex items-center text-sm font-bold text-slate-900 group">
-                            Enter Module
-                            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                        <div className="flex items-center text-xs font-bold text-indigo-600 uppercase tracking-widest group-hover:gap-2 transition-all">
+                            Initialize Protocol
+                            <ArrowRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-x-1 duration-300" />
                         </div>
                     </Link>
                 ))}

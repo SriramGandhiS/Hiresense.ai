@@ -9,25 +9,7 @@ const ResumeIntelligence = () => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState('');
     const [dragActive, setDragActive] = useState(false);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const inputRef = useRef(null);
-
-    const handleMouseMove = (e) => {
-        const { clientX, clientY } = e;
-        const x = (clientX / window.innerWidth - 0.5) * 40;
-        const y = (clientY / window.innerHeight - 0.5) * 40;
-        setMousePos({ x, y });
-    };
-
-    const handleDrag = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.type === "dragenter" || e.type === "dragover") {
-            setDragActive(true);
-        } else if (e.type === "dragleave") {
-            setDragActive(false);
-        }
-    };
 
     const validateFile = (selectedFile) => {
         setError('');
@@ -52,6 +34,16 @@ const ResumeIntelligence = () => {
         }
 
         return true;
+    };
+
+    const handleDrag = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.type === "dragenter" || e.type === "dragover") {
+            setDragActive(true);
+        } else if (e.type === "dragleave") {
+            setDragActive(false);
+        }
     };
 
     const handleDrop = (e) => {
@@ -120,169 +112,124 @@ const ResumeIntelligence = () => {
     };
 
     return (
-        <div
-            className="relative min-h-screen max-w-7xl mx-auto px-4 py-10 space-y-10 overflow-hidden"
-            onMouseMove={handleMouseMove}
-        >
-            {/* Parallax Background Decorations */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 mesh-bg">
-                {/* Large Background Blobs */}
-                <div
-                    className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px] animate-blob"
-                    style={{ transform: `translate(${mousePos.x * -0.6}px, ${mousePos.y * -0.6}px)` }}
-                />
-                <div
-                    className="absolute bottom-[10%] right-[-5%] w-[45%] h-[45%] bg-rose-500/10 rounded-full blur-[100px] animate-blob"
-                    style={{ transform: `translate(${mousePos.x * 0.9}px, ${mousePos.y * 0.9}px)`, animationDelay: '-2s' }}
-                />
-                <div
-                    className="absolute top-[30%] right-[10%] w-[30%] h-[30%] bg-emerald-500/10 rounded-full blur-[80px] animate-blob"
-                    style={{ transform: `translate(${mousePos.x * -0.4}px, ${mousePos.y * -0.4}px)`, animationDelay: '-5s' }}
-                />
-
-                {/* Interactive Grid */}
-                <div
-                    className="absolute inset-0 opacity-[0.03]"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle at 1px 1px, #000 1px, transparent 0)',
-                        backgroundSize: '40px 40px',
-                        transform: `translate(${mousePos.x * 0.1}px, ${mousePos.y * 0.1}px)`
-                    }}
-                />
-
-                {/* Floating Particles */}
-                {[...Array(6)].map((_, i) => (
-                    <div
-                        key={i}
-                        className="absolute w-2 h-2 bg-indigo-500/20 rounded-full animate-float blur-[1px]"
-                        style={{
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                            transform: `translate(${mousePos.x * (0.2 + i * 0.2)}px, ${mousePos.y * (0.2 + i * 0.2)}px)`,
-                            animationDelay: `${i * -1.5}s`
-                        }}
-                    />
-                ))}
-
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay"></div>
-            </div>
-
-            <header
-                className="text-center space-y-4 relative z-10"
-                style={{ transform: `translate(${mousePos.x * 0.2}px, ${mousePos.y * 0.2}px)` }}
-            >
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/50 backdrop-blur-md border border-indigo-100 text-indigo-600 text-sm font-black tracking-wide uppercase shadow-sm">
-                    <Sparkles className="w-4 h-4 mr-2 animate-pulse" />
-                    AI-Powered Analysis
+        <div className="max-w-5xl mx-auto space-y-12 pb-12">
+            <header className="text-center space-y-6">
+                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold tracking-[0.2em] uppercase">
+                    <Sparkles className="w-3.5 h-3.5 mr-2" />
+                    Neural CV Synthesis
                 </div>
-                <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none">
-                    Is your resume <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-500">good enough?</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                    Is your resume <span className="text-indigo-600">Placement Ready?</span>
                 </h1>
-                <p className="text-slate-500 text-xl max-w-2xl mx-auto font-medium">
-                    A free and fast AI resume checker doing 16 crucial checks to ensure your resume is ready to perform and get you interview callbacks.
+                <p className="text-gray-500 text-lg max-w-2xl mx-auto font-medium">
+                    Our AI scans 16 critical compliance vectors to ensure you bypass ATS filters and land interview callbacks.
                 </p>
             </header>
 
             {!result ? (
-                <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-10 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1.5 bg-indigo-600/10">
-                        {loading && <div className="h-full bg-indigo-600 animate-progress origin-left"></div>}
+                <div className="premium-card p-1 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gray-50">
+                        {loading && <div className="h-full bg-indigo-600 animate-pulse w-full"></div>}
                     </div>
 
-                    {error && (
-                        <div className="mb-8 p-4 flex items-start bg-red-50 border border-red-200 text-red-700 rounded-2xl">
-                            <AlertCircle className="w-5 h-5 mr-3 shrink-0 mt-0.5" />
-                            <div>
-                                <h3 className="font-bold text-sm">Upload Rejected</h3>
-                                <p className="text-sm mt-1">{error}</p>
-                            </div>
-                        </div>
-                    )}
-
-                    <div
-                        className={`relative w-full h-80 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${dragActive ? 'border-indigo-500 bg-indigo-50/50 scale-[1.01]' : 'border-slate-200 bg-slate-50/50 hover:bg-white hover:border-indigo-300 hover:shadow-inner'
-                            }`}
-                        onDragEnter={handleDrag}
-                        onDragLeave={handleDrag}
-                        onDragOver={handleDrag}
-                        onDrop={handleDrop}
-                    >
-                        <input
-                            ref={inputRef}
-                            type="file"
-                            className="hidden"
-                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            onChange={handleChange}
-                        />
-
-                        {!file ? (
-                            <>
-                                <div className="w-20 h-20 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-6 transition-transform hover:scale-110 duration-300">
-                                    <UploadCloud className="w-10 h-10 text-indigo-500" />
-                                </div>
-                                <h3 className="text-2xl font-bold text-slate-900 text-center">Drop your resume here</h3>
-                                <p className="text-slate-500 mt-2 text-center font-medium">PDF & DOCX only. Max 5MB file size.</p>
-                                <button
-                                    onClick={onButtonClick}
-                                    className="mt-10 px-8 py-3 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 hover:shadow-indigo-300 active:scale-95"
-                                >
-                                    Browse Your Files
-                                </button>
-                            </>
-                        ) : (
-                            <div className="flex flex-col items-center w-full px-8 animate-in zoom-in-95 duration-300">
-                                <div className="w-24 h-24 bg-white rounded-3xl shadow-sm border border-slate-200 flex items-center justify-center mb-6 relative group">
-                                    <FileText className="w-12 h-12 text-indigo-500" />
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); removeFile(); }}
-                                        className="absolute -top-3 -right-3 bg-white text-slate-400 border border-slate-200 rounded-full p-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all shadow-md active:scale-90"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                </div>
-                                <h3 className="text-xl font-bold text-slate-900 text-center truncate max-w-sm">{file.name}</h3>
-                                <div className="inline-flex items-center px-4 py-1.5 mt-4 rounded-full bg-indigo-50 border border-indigo-100 text-xs font-black text-indigo-600">
-                                    {(file.size / (1024 * 1024)).toFixed(2)} MB
+                    <div className="p-10 space-y-8">
+                        {error && (
+                            <div className="p-4 flex items-start bg-red-50 border border-red-100 text-red-600 rounded-2xl">
+                                <AlertCircle className="w-5 h-5 mr-3 shrink-0 mt-0.5" />
+                                <div>
+                                    <h3 className="font-bold text-sm uppercase tracking-wide">Signal Rejected</h3>
+                                    <p className="text-sm mt-1">{error}</p>
                                 </div>
                             </div>
                         )}
-                    </div>
 
-                    <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center text-slate-400 text-sm">
-                            <CheckCircle2 className="w-4 h-4 mr-2 text-emerald-500" />
-                            Privacy guaranteed & GDPR compliant
-                        </div>
-                        <button
-                            onClick={handleUpload}
-                            disabled={!file || loading}
-                            className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-slate-200 flex items-center group"
+                        <div
+                            className={`relative w-full h-80 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${dragActive ? 'border-indigo-500 bg-indigo-50/30 scale-[1.01]' : 'border-gray-200 bg-gray-50/30 hover:bg-white hover:border-indigo-300'
+                                }`}
+                            onDragEnter={handleDrag}
+                            onDragLeave={handleDrag}
+                            onDragOver={handleDrag}
+                            onDrop={handleDrop}
                         >
-                            {loading ? (
+                            <input
+                                ref={inputRef}
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.doc,.docx"
+                                onChange={handleChange}
+                            />
+
+                            {!file ? (
                                 <>
-                                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-3"></div>
-                                    AI is checking...
+                                    <div className="w-20 h-20 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6">
+                                        <UploadCloud className="w-10 h-10 text-indigo-500" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900">Drop Identity Document</h3>
+                                    <p className="text-gray-400 mt-2 text-sm font-medium">PDF or DOCX (Max 5MB)</p>
+                                    <button
+                                        onClick={onButtonClick}
+                                        className="mt-8 px-8 py-3 bg-white border border-gray-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-gray-50 transition-all active:scale-95"
+                                    >
+                                        Browse Directory
+                                    </button>
                                 </>
                             ) : (
-                                <>
-                                    Check My Resume
-                                    <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
-                                </>
+                                <div className="flex flex-col items-center w-full px-8">
+                                    <div className="w-24 h-24 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center mb-6 relative">
+                                        <FileText className="w-12 h-12 text-indigo-500" />
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); removeFile(); }}
+                                            className="absolute -top-3 -right-3 bg-white text-gray-400 border border-gray-200 rounded-full p-2 hover:text-red-500 shadow-md transition-all active:scale-90"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 truncate max-w-sm">{file.name}</h3>
+                                    <div className="mt-4 px-4 py-1 rounded-full bg-indigo-50 text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                        {(file.size / (1024 * 1024)).toFixed(2)} MB Ready
+                                    </div>
+                                </div>
                             )}
-                        </button>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-gray-50">
+                            <div className="flex items-center text-gray-400 text-xs font-medium">
+                                <CheckCircle2 className="w-4 h-4 mr-2 text-indigo-500" />
+                                Industrial-grade Encryption Enabled
+                            </div>
+                            <button
+                                onClick={handleUpload}
+                                disabled={!file || loading}
+                                className="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-sm hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-indigo-100 flex items-center group"
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-3"></div>
+                                        Analyzing CV Architecture...
+                                    </>
+                                ) : (
+                                    <>
+                                        Initiate Scan
+                                        <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             ) : (
-                <ResumeScoreCard
-                    score={result.score}
-                    analysis={result.analysis}
-                    summary={result.summary}
-                />
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <ResumeScoreCard
+                        score={result.score}
+                        analysis={result.analysis}
+                        summary={result.summary}
+                    />
+                </div>
             )}
 
-            <footer className="pt-10 border-t border-slate-100 text-center">
-                <p className="text-slate-400 text-sm font-medium">
-                    Inspired by professional tools like FlowCV and Enhancv
+            <footer className="text-center pt-8">
+                <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.3em] opacity-50">
+                    Hiresense.ai Core Intelligence Layer
                 </p>
             </footer>
         </div>

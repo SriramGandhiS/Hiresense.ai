@@ -15,7 +15,6 @@ const MockInterviewSetup = () => {
     useEffect(() => {
         const checkAccess = async () => {
             try {
-                // First verify if user has access (score >= 7)
                 const accessRes = await api.get('/mock-interview/verify-access');
 
                 if (!accessRes.data.allowed) {
@@ -24,13 +23,11 @@ const MockInterviewSetup = () => {
                     return;
                 }
 
-                // If allowed, fetch latest passed quiz company
                 try {
                     const latestRes = await api.get('/mock-interview/latest-passed');
                     setCompany(latestRes.data.companyName);
                 } catch (err) {
-                    // It's okay if we don't find a company, though verify-access says they passed
-                    setCompany('General');
+                    setCompany('General Core');
                 }
 
                 setLoading(false);
@@ -46,7 +43,6 @@ const MockInterviewSetup = () => {
 
     const handleStart = () => {
         setVerifying(true);
-        // Simulate a small delay for "Professional" feel
         setTimeout(() => {
             navigate('/mock-interview/session', {
                 state: { company, role, type }
@@ -56,68 +52,69 @@ const MockInterviewSetup = () => {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mb-4" />
-                <p className="text-slate-500 font-medium">Verifying your assessment status...</p>
+            <div className="flex flex-col items-center justify-center min-h-[50vh]">
+                <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-6" />
+                <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Verifying Authorization...</p>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded-2xl border border-slate-200 shadow-sm text-center">
+            <div className="max-w-md mx-auto mt-12 premium-card p-10 text-center animate-in zoom-in-95 duration-500">
                 <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
                     <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Access Locked</h2>
-                <p className="text-slate-500 mb-8">{error}</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Access Locked</h2>
+                <p className="text-gray-500 mb-8 font-medium leading-relaxed">{error}</p>
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+                    className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200"
                 >
-                    Return to Dashboard
+                    Return to Mission Control
                 </button>
             </div>
         );
     }
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <header>
+        <div className="max-w-2xl mx-auto space-y-8 pb-12">
+            <header className="flex flex-col">
                 <div className="flex items-center space-x-3 mb-2">
-                    <div className="p-2 bg-indigo-100 rounded-lg">
-                        <Briefcase className="w-6 h-6 text-indigo-600" />
+                    <div className="p-2 bg-indigo-50 rounded-lg">
+                        <Briefcase className="w-5 h-5 text-indigo-600" />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Mock Interview Setup</h1>
+                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Module Configuration</span>
                 </div>
-                <p className="text-slate-500 mt-2 text-lg">Configure your session parameters before we begin.</p>
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">AI Proctor Setup</h1>
+                <p className="text-gray-500 mt-2 text-base font-medium">Configure your session parameters for the high-pressure protocol.</p>
             </header>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-8 space-y-6">
+            <div className="premium-card overflow-hidden">
+                <div className="p-8 space-y-8">
                     {/* Company Field (Auto-filled) */}
-                    <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
-                            <Building2 className="w-4 h-4 mr-2" /> Target Company
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center">
+                            <Building2 className="w-4 h-4 mr-2" /> Target Environment
                         </label>
                         <input
                             type="text"
                             value={company}
                             disabled
-                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-medium cursor-not-allowed"
+                            className="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 font-bold cursor-not-allowed opacity-80"
                         />
-                        <p className="text-xs text-slate-400 mt-2">Auto-filled from your latest successful assessment.</p>
+                        <p className="text-[10px] text-gray-400 font-medium">Auto-derived from latest successful assessment.</p>
                     </div>
 
                     {/* Role Dropdown */}
-                    <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center">
-                            <UserCircle className="w-4 h-4 mr-2" /> Select Role
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center">
+                            <UserCircle className="w-4 h-4 mr-2" /> Persona Alignment
                         </label>
                         <select
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
-                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                            className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-900 font-bold focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all shadow-sm"
                         >
                             <option value="Software Engineer">Software Engineer</option>
                             <option value="Data Analyst">Data Analyst</option>
@@ -127,16 +124,16 @@ const MockInterviewSetup = () => {
                     </div>
 
                     {/* Interview Type */}
-                    <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-3">Interview Type</label>
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Protocol Type</label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {['General Technical', 'Behavioral', 'Mixed'].map((t) => (
                                 <button
                                     key={t}
                                     onClick={() => setType(t)}
-                                    className={`px-4 py-3 rounded-xl border text-sm font-bold transition-all ${type === t
-                                            ? 'bg-indigo-50 border-indigo-600 text-indigo-700'
-                                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                    className={`px-4 py-3 rounded-xl border text-xs font-black transition-all uppercase tracking-widest ${type === t
+                                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
+                                        : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'
                                         }`}
                                 >
                                     {t}
@@ -146,24 +143,25 @@ const MockInterviewSetup = () => {
                     </div>
                 </div>
 
-                <div className="p-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                    <div className="text-sm text-slate-500">
-                        <span className="font-bold text-slate-900">5 Questions</span> • ~15 Minutes
+                <div className="p-8 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Intensity Matrix</span>
+                        <span className="text-xs font-bold text-gray-900">5 Questions • 15 Mins</span>
                     </div>
                     <button
                         onClick={handleStart}
                         disabled={verifying}
-                        className="btn-primary flex items-center px-8 py-3 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-300 active:scale-95 transform transition-all"
+                        className="bg-indigo-600 text-white flex items-center px-10 py-4 rounded-xl font-bold text-sm shadow-xl shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition-all"
                     >
                         {verifying ? (
                             <>
-                                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                Initializing...
+                                <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+                                Synchronizing...
                             </>
                         ) : (
                             <>
-                                Start Interview
-                                <Play className="w-4 h-4 ml-2 fill-current" />
+                                Begin Session
+                                <Play className="w-4 h-4 ml-3 fill-current" />
                             </>
                         )}
                     </button>

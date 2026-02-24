@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2, XCircle, TrendingUp, AlertTriangle, Building2, Target, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, XCircle, TrendingUp, AlertTriangle, Building2, Target, Zap } from 'lucide-react';
 
 const ProgressBar = ({ label, score, colorClass }) => (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
         <div className="flex justify-between items-end">
-            <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{label}</span>
-            <span className={`text-xs font-black ${colorClass}`}>{score}%</span>
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</span>
+            <span className={`text-xs font-bold ${colorClass}`}>{score}%</span>
         </div>
-        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
             <div
                 className={`h-full transition-all duration-1000 ease-out rounded-full ${colorClass.replace('text-', 'bg-')}`}
                 style={{ width: `${score}%` }}
@@ -18,18 +18,6 @@ const ProgressBar = ({ label, score, colorClass }) => (
 
 const ResumeScoreCard = ({ score, analysis, summary }) => {
     const [displayScore, setDisplayScore] = useState(0);
-    const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
-    const handleMouseMove = (e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 10;
-        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
-        setTilt({ x, y });
-    };
-
-    const handleMouseLeave = () => {
-        setTilt({ x: 0, y: 0 });
-    };
 
     useEffect(() => {
         let start = 0;
@@ -53,105 +41,80 @@ const ResumeScoreCard = ({ score, analysis, summary }) => {
     const { categories = {}, issueCount = 0, strengths = [], weaknesses = [], checks = [] } = analysis;
 
     return (
-        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 perspective-1000">
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* Header / Score Overview */}
-            <div
-                className="grid md:grid-cols-3 gap-8 items-start transition-transform duration-200 ease-out"
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                style={{
-                    transform: `rotateY(${tilt.x}deg) rotateX(${-tilt.y}deg)`,
-                    transformStyle: 'preserve-3d'
-                }}
-            >
+            <div className="grid md:grid-cols-3 gap-8 items-stretch">
                 {/* Score Column */}
-                <div
-                    className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-2xl flex flex-col items-center text-center space-y-6 transition-all duration-500 hover:shadow-indigo-100 hover:-translate-y-2 group"
-                    style={{ transform: 'translateZ(50px)' }}
-                >
-                    <div className="relative w-48 h-48 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                        {/* Circular Progress Ring */}
+                <div className="premium-card p-10 flex flex-col items-center text-center space-y-8">
+                    <div className="relative w-48 h-48 flex items-center justify-center">
                         <svg className="absolute inset-0 w-full h-full -rotate-90">
                             <circle
                                 cx="50%"
                                 cy="50%"
                                 r="45%"
-                                className="fill-none stroke-slate-100 stroke-[8]"
+                                className="fill-none stroke-gray-100 stroke-[10]"
                             />
                             <circle
                                 cx="50%"
                                 cy="50%"
                                 r="45%"
-                                className="fill-none stroke-rose-500 stroke-[8] transition-all duration-1000 ease-out"
+                                className="fill-none stroke-indigo-600 stroke-[10] transition-all duration-1000 ease-out"
                                 strokeDasharray="283"
                                 strokeDashoffset={283 - (283 * displayScore) / 100}
                                 strokeLinecap="round"
                             />
                         </svg>
 
-                        <div className="relative z-10 space-y-0">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                                {analysis.detectedType || (score === 0 ? "Document" : "Score")}
-                            </h3>
+                        <div className="relative z-10 flex flex-col">
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Impact Score</span>
                             <div className="flex items-end justify-center">
-                                <span className={`text-7xl font-black mb-[-8px] drop-shadow-sm ${score === 0 ? 'text-slate-400' : 'text-rose-500'}`}>{displayScore}</span>
-                                <span className="text-2xl font-bold text-slate-300">/100</span>
+                                <span className="text-7xl font-extrabold text-gray-900 tracking-tighter">{displayScore}</span>
+                                <span className="text-xl font-bold text-gray-300 mb-2 ml-1">/100</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full space-y-5 pt-6 border-t border-slate-100">
-                        <ProgressBar label="Content" score={categories.content || 0} colorClass="text-rose-500" />
-                        <ProgressBar label="Sections" score={categories.sections || 0} colorClass="text-emerald-500" />
-                        <ProgressBar label="ATS Essentials" score={categories.ats || 0} colorClass="text-amber-500" />
-                        <ProgressBar label="Tailoring" score={categories.tailoring || 0} colorClass="text-indigo-500" />
+                    <div className="w-full space-y-6 pt-6 border-t border-gray-50">
+                        <ProgressBar label="Content Quality" score={categories.content || 0} colorClass="text-indigo-600" />
+                        <ProgressBar label="ATS Essentials" score={categories.ats || 0} colorClass="text-teal-600" />
+                        <ProgressBar label="Profile Tailoring" score={categories.tailoring || 0} colorClass="text-slate-600" />
                     </div>
-                    {issueCount > 0 && (
-                        <div className="px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-[10px] font-black uppercase tracking-tighter animate-pulse">
-                            {issueCount} Issues Flagged
-                        </div>
-                    )}
                 </div>
 
-                {/* Main Results Column */}
-                <div className="md:col-span-2 space-y-8">
-                    {/* Summary Card */}
-                    <div
-                        className="bg-indigo-600 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group hover:-translate-y-2 transition-all duration-500"
-                        style={{ transform: 'translateZ(40px)', transformStyle: 'preserve-3d' }}
-                    >
-                        <Zap className="absolute -right-4 -top-4 w-32 h-32 text-indigo-500 opacity-20 rotate-12 group-hover:rotate-45 transition-transform duration-700" />
-                        <div className="relative z-10 space-y-3" style={{ transform: 'translateZ(20px)' }}>
-                            <h2 className="text-2xl font-black">Expert Review Summary</h2>
-                            <p className="text-indigo-100 text-lg font-medium leading-relaxed">{summary}</p>
+                {/* Summary Column */}
+                <div className="md:col-span-2 space-y-8 flex flex-col">
+                    <div className="flex-1 bg-indigo-600 p-10 rounded-[2rem] text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
+                        <Zap className="absolute -right-6 -top-6 w-40 h-40 text-white opacity-10 rotate-12 group-hover:rotate-45 transition-transform duration-1000" />
+                        <div className="relative z-10 space-y-4">
+                            <h2 className="text-2xl font-black tracking-tight uppercase">Executive Summary</h2>
+                            <p className="text-indigo-50 text-xl font-medium leading-relaxed opacity-90">{summary}</p>
                         </div>
                     </div>
 
-                    {/* Quick Improvements */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ transform: 'translateZ(30px)', transformStyle: 'preserve-3d' }}>
-                        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xl hover:shadow-emerald-100 transition-all duration-500 group">
-                            <div className="flex items-center space-x-2 mb-4 text-emerald-600 group-hover:scale-110 transition-transform origin-left">
-                                <TrendingUp className="w-5 h-5" />
-                                <h4 className="font-black uppercase text-xs tracking-widest">Top Strengths</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="premium-card p-8 group">
+                            <div className="flex items-center space-x-3 mb-6">
+                                <div className="p-2 bg-teal-50 rounded-lg"><TrendingUp className="w-5 h-5 text-teal-600" /></div>
+                                <h4 className="font-black uppercase text-xs tracking-widest text-gray-900">Core Strengths</h4>
                             </div>
-                            <ul className="space-y-3">
-                                {strengths.map((s, i) => (
-                                    <li key={i} className="flex items-start text-sm text-slate-600 font-medium translate-z-10">
-                                        <CheckCircle2 className="w-4 h-4 text-emerald-500 mr-2 shrink-0 mt-0.5" />
+                            <ul className="space-y-4">
+                                {strengths.slice(0, 3).map((s, i) => (
+                                    <li key={i} className="flex items-start text-sm text-gray-600 font-medium leading-snug">
+                                        <CheckCircle2 className="w-4 h-4 text-teal-500 mr-3 shrink-0 mt-0.5" />
                                         {s}
                                     </li>
                                 ))}
                             </ul>
                         </div>
-                        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xl hover:shadow-rose-100 transition-all duration-500 group">
-                            <div className="flex items-center space-x-2 mb-4 text-rose-600 group-hover:scale-110 transition-transform origin-left">
-                                <AlertTriangle className="w-5 h-5" />
-                                <h4 className="font-black uppercase text-xs tracking-widest">Critical Fixes</h4>
+                        <div className="premium-card p-8 group">
+                            <div className="flex items-center space-x-3 mb-6">
+                                <div className="p-2 bg-rose-50 rounded-lg"><AlertTriangle className="w-5 h-5 text-rose-600" /></div>
+                                <h4 className="font-black uppercase text-xs tracking-widest text-gray-900">Action Items</h4>
                             </div>
-                            <ul className="space-y-3">
-                                {weaknesses.map((w, i) => (
-                                    <li key={i} className="flex items-start text-sm text-slate-600 font-medium translate-z-10">
-                                        <XCircle className="w-4 h-4 text-rose-500 mr-2 shrink-0 mt-0.5" />
+                            <ul className="space-y-4">
+                                {weaknesses.slice(0, 3).map((w, i) => (
+                                    <li key={i} className="flex items-start text-sm text-gray-600 font-medium leading-snug">
+                                        <XCircle className="w-4 h-4 text-rose-500 mr-3 shrink-0 mt-0.5" />
                                         {w.area}
                                     </li>
                                 ))}
@@ -161,35 +124,36 @@ const ResumeScoreCard = ({ score, analysis, summary }) => {
                 </div>
             </div>
 
-            {/* Recruiter Deep-Dive (Enhancv Layout) */}
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 text-slate-900">
-                        <div className="p-2 bg-indigo-100 rounded-xl">
-                            <Building2 className="w-6 h-6 text-indigo-600" />
-                        </div>
-                        <h3 className="text-2xl font-black tracking-tight">Recruiter Deep-Dive (16 Checks)</h3>
+            {/* Detailed Checks Grid */}
+            <div className="space-y-8">
+                <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-gray-100 rounded-2xl">
+                        <Building2 className="w-6 h-6 text-indigo-600" />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-black text-gray-900 tracking-tight">Technical Compliance Audit</h3>
+                        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">16 Vector Intelligence Analysis</p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {checks.map((check, i) => (
-                        <div key={i} className={`p-5 rounded-3xl border transition-all duration-300 hover:shadow-lg ${check.passed ? 'bg-white border-slate-200' : 'bg-rose-50/50 border-rose-100'
+                        <div key={i} className={`p-6 rounded-2xl border transition-all duration-300 ${check.passed ? 'bg-white border-gray-100 shadow-sm' : 'bg-rose-50/30 border-rose-100 shadow-sm shadow-rose-50'
                             }`}>
                             <div className="flex items-center justify-between mb-4">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{check.name}</span>
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{check.name}</span>
                                 {check.passed ? (
-                                    <div className="px-2 py-0.5 bg-emerald-100 text-emerald-600 rounded-full text-[9px] font-black">Passed</div>
+                                    <div className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full text-[9px] font-black uppercase tracking-tighter">Verified</div>
                                 ) : (
-                                    <div className="px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full text-[9px] font-black">Issue</div>
+                                    <div className="px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full text-[9px] font-black uppercase tracking-tighter">Signal Failure</div>
                                 )}
                             </div>
-                            <p className="text-sm font-bold text-slate-800 leading-snug mb-3">{check.feedback}</p>
-                            <div className="pt-3 border-t border-slate-100/50">
-                                <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center mb-1">
-                                    <Target className="w-3 h-3 mr-1" /> Expectation
+                            <p className="text-sm font-bold text-gray-800 leading-snug mb-4">{check.feedback}</p>
+                            <div className="pt-4 border-t border-gray-50">
+                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 flex items-center">
+                                    <Target className="w-3 h-3 mr-1.5" /> Benchmarked Expectation
                                 </div>
-                                <p className="text-[11px] text-slate-500 italic leading-tight">{check.companyExpectation}</p>
+                                <p className="text-[11px] text-gray-500 font-medium leading-relaxed italic">{check.companyExpectation}</p>
                             </div>
                         </div>
                     ))}
