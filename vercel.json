@@ -9,7 +9,7 @@
             "src": "frontend/package.json",
             "use": "@vercel/static-build",
             "config": {
-                "outputDirectory": "dist"
+                "outputDirectory": "frontend/dist"
             }
         }
     ],
@@ -19,8 +19,8 @@
             "destination": "/backend/server.js"
         },
         {
-            "source": "/(.*)",
-            "destination": "/frontend/index.html"
+            "source": "/((?!assets/|images/|vite.svg|favicon.ico).*)",
+            "destination": "/index.html"
         }
     ]
 }
