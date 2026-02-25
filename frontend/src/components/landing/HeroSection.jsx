@@ -3,17 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import LiquidEther from '../reactbits/LiquidEther';
+import Silk from '../reactbits/Silk';
+import Prism from '../Prism';
+import LightPillar from '../LightPillar';
 import GradientText from '../reactbits/GradientText';
 import ShinyText from '../reactbits/ShinyText';
 import StarBorder from '../reactbits/StarBorder';
 import ClickSpark from '../reactbits/ClickSpark';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import HiresenseTransition from '../HiresenseTransition';
+import CinematicLogin from '../CinematicLogin';
 
 const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
 
-const HeroSection = ({ onCinematicChange }) => {
+const HeroSection = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
 
@@ -23,11 +26,7 @@ const HeroSection = ({ onCinematicChange }) => {
     const [adminCreds, setAdminCreds] = useState({ email: '', password: '' });
     const [isCinematicActive, setIsCinematicActive] = useState(false);
     const [authData, setAuthData] = useState(null);
-
-    // Sync cinematic state with parent for performance optimization (disabling heavy effects)
-    useEffect(() => {
-        onCinematicChange?.(isCinematicActive);
-    }, [isCinematicActive, onCinematicChange]);
+    const [isAnimationFinished, setIsAnimationFinished] = useState(false);
 
     const handleGoogleSuccess = async (tokenResponse) => {
         setLoading(true); setError('');
@@ -42,46 +41,75 @@ const HeroSection = ({ onCinematicChange }) => {
 
     const loginWithGoogle = useGoogleLogin({ onSuccess: handleGoogleSuccess, onError: () => setError('Google Login failed.') });
 
-    const handleBypassLogin = () => {
-        // Immediate cleanup for 60FPS performance
-        const mockAuth = {
-            user: { name: 'Admin', email: 'root@hiresense.ai' },
-            token: 'mock-k-bypass'
-        };
-        setAuthData(mockAuth);
-        setIsCinematicActive(true);
+    const handleAdminLogin = async (e) => {
+        e.preventDefault(); setLoading(true); setError('');
+        try {
+            setIsCinematicActive(true);
+            const res = await api.post('/auth/login', adminCreds);
+            setAuthData(res.data);
+        } catch (err) {
+            setIsCinematicActive(false);
+            setError(err.response?.data?.message || 'Admin authentication failed.');
+        } finally { setLoading(false); }
     };
 
-    const handleAnimationComplete = () => {
-        if (authData) {
+    useEffect(() => {
+        if (isAnimationFinished && authData) {
             login(authData.user, authData.token);
             navigate('/dashboard');
         }
-    };
+    }, [isAnimationFinished, authData, login, navigate]);
 
     return (
         <ClickSpark sparkColor="#7c6fff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500} easing="ease-out" extraScale={1.2}>
             <section className="relative min-h-screen overflow-hidden bg-black flex flex-col">
 
-                {/* Fluid background - ABSOLUTE UNMOUNT for 60FPS PERFORMANCE */}
-                {!isCinematicActive ? (
+                {/* Background Layer: Silk + Prism + LightPillar */}
+                {!isCinematicActive && (
                     <div className="absolute inset-0 z-0">
-                        <LiquidEther
-                            colors={['#5227FF', '#FF9FFC', '#B19EEF']}
-                            mouseForce={15} cursorSize={60} isViscous viscous={20}
-                            iterationsViscous={20} iterationsPoisson={20} resolution={0.4}
-                            isBounce={false} autoDemo autoSpeed={0.6} autoIntensity={2.0}
-                            takeoverDuration={0.4} autoResumeDelay={2500} autoRampDuration={1.2}
-                            color0="#5227FF" color1="#FF9FFC" color2="#B19EEF"
-                        />
+                        {/* Base Silk Layer */}
+                        <div className="absolute inset-0 opacity-40">
+                            <Silk color="#110d24" speed={0.8} scale={0.6} noiseIntensity={1.2} />
+                        </div>
+
+                        {/* Prism Core */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-80 pointer-events-none">
+                            <Prism scale={3.2} glow={1.2} bloom={1.5} noise={0.4} timeScale={0.4} />
+                        </div>
+
+                        {/* Atmospheric Light Pillars */}
+                        <div className="absolute inset-x-0 top-0 h-2/3 pointer-events-none z-[1]">
+                            <LightPillar topColor="#5227FF" bottomColor="#000000" intensity={0.8} pillarWidth={4} pillarHeight={0.2} />
+                        </div>
+
+                        {/* Fluid Interaction (Optional, can keep for interactivity if not too heavy) */}
+                        <div className="absolute inset-0 opacity-20 mix-blend-screen overflow-hidden">
+                            <LiquidEther
+                                colors={['#5227FF', '#FF9FFC', '#B19EEF']}
+                                mouseForce={15} cursorSize={60} isViscous viscous={20}
+                                iterationsViscous={20} iterationsPoisson={20} resolution={0.3}
+                                autoDemo={true} autoSpeed={0.4}
+                            />
+                        </div>
                     </div>
-                ) : null}
+                )}
+
+                {/* Fluid background - Interaction Layer */}
+                {!isCinematicActive && (
+                    <div className="absolute inset-0 z-0">
+                        {/* We already have the background in the block above, so we keep only the interaction logic here if needed, or better yet, merged them. 
+                             Merging into the block above for clarity.
+                         */}
+                    </div>
+                )}
 
                 <style>{`@keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
 
-                {isCinematicActive && (
-                    <HiresenseTransition onComplete={handleAnimationComplete} />
-                )}
+                <CinematicLogin
+                    isTriggered={isCinematicActive}
+                    onAnimationComplete={() => setIsAnimationFinished(true)}
+                    authReady={!!authData}
+                />
 
                 {/* ── HERO BODY ── */}
                 <div className={`relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-28 gap-0 transition-opacity duration-500 ${isCinematicActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
@@ -121,26 +149,43 @@ const HeroSection = ({ onCinematicChange }) => {
                         transition={{ delay: 0.7, duration: 1, ease: 'circOut' }}
                         className="w-full max-w-xs"
                     >
-                        <div className="flex flex-col items-center gap-4">
-                            <StarBorder as="div" color="#7c6fff" speed={isCinematicActive ? "0s" : "4s"} className="w-full">
-                                <button onClick={() => loginWithGoogle()} disabled={loading} className="w-full text-[11px] tracking-[0.2em] font-black uppercase">
-                                    {loading ? 'Authenticating...' : 'Continue with Google'}
-                                </button>
-                            </StarBorder>
+                        <AnimatePresence mode="wait">
+                            {!isAdminMode ? (
+                                <motion.div key="google" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex flex-col items-center gap-4">
+                                    <StarBorder as="div" color="#7c6fff" speed={isCinematicActive ? "0s" : "4s"} className="w-full">
+                                        <button onClick={() => loginWithGoogle()} disabled={loading} className="w-full text-[11px] tracking-[0.2em] font-black uppercase">
+                                            {loading ? 'Authenticating...' : 'Continue with Google'}
+                                        </button>
+                                    </StarBorder>
 
-                            <div className="flex items-center gap-3 w-full">
-                                <div className="flex-1 h-px bg-white/10" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">or</span>
-                                <div className="flex-1 h-px bg-white/10" />
-                            </div>
+                                    <div className="flex items-center gap-3 w-full">
+                                        <div className="flex-1 h-px bg-white/10" />
+                                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">or</span>
+                                        <div className="flex-1 h-px bg-white/10" />
+                                    </div>
 
-                            <button
-                                onClick={handleBypassLogin}
-                                className="text-[10px] font-black text-white/35 hover:text-white/60 transition-colors uppercase tracking-[0.4em] w-full py-2 border border-white/10 rounded-2xl"
-                            >
-                                Admin Override (No Password)
-                            </button>
-                        </div>
+                                    <button
+                                        onClick={() => setIsAdminMode(true)}
+                                        className="text-[10px] font-black text-white/35 hover:text-white/60 transition-colors uppercase tracking-[0.4em] w-full py-2 border border-white/10 rounded-2xl"
+                                    >
+                                        Admin Override
+                                    </button>
+                                </motion.div>
+                            ) : (
+                                <motion.form key="admin" onSubmit={handleAdminLogin} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex flex-col items-center gap-3 w-full">
+                                    <input type="text" placeholder="ACCESS ID" value={adminCreds.email} onChange={(e) => setAdminCreds({ ...adminCreds, email: e.target.value })}
+                                        className="w-full bg-white/5 border border-white/15 rounded-2xl px-6 py-4 text-white text-[11px] tracking-widest outline-none focus:border-white/40 transition-all text-center placeholder:text-white/20" required />
+                                    <input type="password" placeholder="SIGNATURE" value={adminCreds.password} onChange={(e) => setAdminCreds({ ...adminCreds, password: e.target.value })}
+                                        className="w-full bg-white/5 border border-white/15 rounded-2xl px-6 py-4 text-white text-[11px] tracking-widest outline-none focus:border-white/40 transition-all text-center placeholder:text-white/20" required />
+                                    <button type="submit" disabled={loading} className="premium-button-white w-full py-4 mt-1 text-[11px]">
+                                        {loading ? 'Authorizing...' : 'Authorize'}
+                                    </button>
+                                    <button type="button" onClick={() => setIsAdminMode(false)} className="text-[9px] font-black text-white/25 hover:text-white/50 transition-colors uppercase tracking-[0.4em]">
+                                        Cancel
+                                    </button>
+                                </motion.form>
+                            )}
+                        </AnimatePresence>
 
                         {error && (
                             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 text-red-400 text-[10px] font-black uppercase tracking-widest text-center">
@@ -165,7 +210,7 @@ const HeroSection = ({ onCinematicChange }) => {
                     </div>
                 </motion.div>
             </section>
-        </ClickSpark>
+        </ClickSpark >
     );
 };
 

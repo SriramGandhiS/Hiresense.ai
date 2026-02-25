@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -14,7 +14,7 @@ import Landing from './pages/Landing';
 const Placeholder = ({ title }) => (
   <div className="flex flex-col items-center justify-center h-full text-center py-20 animate-in fade-in duration-700">
     <div className="w-32 h-32 bg-indigo-50 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-inner border border-indigo-100/50">
-      <span className="text-5xl drop-shadow-sm">🏗️</span>
+      <span className="text-5xl drop-shadow-sm">≡ƒÅù∩╕Å</span>
     </div>
     <div className="space-y-4">
       <div className="inline-flex items-center px-4 py-1 rounded-full bg-gray-100 border border-gray-200 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Module Under Construction</div>
