@@ -3,7 +3,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import CinematicLogin from '../components/CinematicLogin';
+import HiresenseTransition from '../components/HiresenseTransition';
 
 const Login = () => {
     const { login } = useAuth();
@@ -14,19 +14,17 @@ const Login = () => {
     const [adminCreds, setAdminCreds] = useState({ email: '', password: '' });
     const [isCinematicActive, setIsCinematicActive] = useState(false);
     const [authData, setAuthData] = useState(null);
-    const [isAnimationFinished, setIsAnimationFinished] = useState(false);
 
     const handleGoogleSuccess = async (tokenResponse) => {
         setLoading(true);
         setError('');
         try {
-            setIsCinematicActive(true);
             const res = await api.post('/auth/google', {
                 credential: tokenResponse.access_token || tokenResponse.credential
             });
             setAuthData(res.data);
+            setIsCinematicActive(true); // Trigger animation ONLY after auth success
         } catch (err) {
-            setIsCinematicActive(false);
             setError(err.response?.data?.message || 'Authentication Failed.');
             console.error('Login Error:', err);
         } finally {
@@ -34,15 +32,11 @@ const Login = () => {
         }
     };
 
-    useEffect(() => {
-        if (isAnimationFinished && authData) {
+    const handleAnimationComplete = () => {
+        if (authData) {
             login(authData.user, authData.token);
             navigate('/dashboard');
         }
-    }, [isAnimationFinished, authData, login, navigate]);
-
-    const handleAnimationComplete = () => {
-        setIsAnimationFinished(true);
     };
 
     const loginWithGoogle = useGoogleLogin({
@@ -55,11 +49,10 @@ const Login = () => {
         setLoading(true);
         setError('');
         try {
-            setIsCinematicActive(true);
             const res = await api.post('/auth/login', adminCreds);
             setAuthData(res.data);
+            setIsCinematicActive(true);
         } catch (err) {
-            setIsCinematicActive(false);
             setError(err.response?.data?.message || 'Admin authentication failed.');
         } finally {
             setLoading(false);
@@ -68,13 +61,11 @@ const Login = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#f8fafc] relative overflow-hidden px-4">
-            <CinematicLogin
-                isTriggered={isCinematicActive}
-                onAnimationComplete={handleAnimationComplete}
-                authReady={!!authData}
-            />
+            {isCinematicActive && (
+                <HiresenseTransition onComplete={handleAnimationComplete} />
+            )}
 
-            <div className={`w-full max-w-md p-8 sm:p-12 bg-white rounded-[24px] shadow-soft border border-gray-100 text-center relative z-10 transition-all duration-500 ${isCinematicActive ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className={`w-full max-w-md p-8 sm:p-12 bg-white rounded-[24px] shadow-soft border border-gray-100 text-center relative z-10 transition-all duration-700 ${isCinematicActive ? 'opacity-0 scale-90 blur-xl pointer-events-none' : 'opacity-100 scale-100'}`}>
                 <div className="flex flex-col items-center justify-center space-y-4 mb-10">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-3xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">H</div>
                     <div className="flex flex-col">
@@ -86,7 +77,7 @@ const Login = () => {
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-4 text-xs font-bold border border-red-100 bg-red-50 text-red-600 rounded-xl">
+                    <div className="mb-6 p-4 text-xs font-bold border border-red-100 bg-red-50 text-red-600 rounded-xl animate-in fade-in slide-in-from-top-2">
                         {error.toUpperCase()}
                     </div>
                 )}
