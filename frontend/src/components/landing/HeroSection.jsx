@@ -7,6 +7,7 @@ import api from '../../services/api';
 import GradientText from '../reactbits/GradientText';
 import StarBorder from '../reactbits/StarBorder';
 import ClickSpark from '../reactbits/ClickSpark';
+import Ballpit from '../reactbits/Ballpit';
 const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
 
 const HeroSection = () => {
@@ -52,6 +53,25 @@ const HeroSection = () => {
             <section className="relative min-h-screen overflow-hidden bg-black flex flex-col">
 
 
+                {/* Background Layer: Ballpit */}
+                <div className="absolute inset-0 z-0 opacity-80" style={{ pointerEvents: isAdminMode ? 'none' : 'auto' }}>
+                    <div style={{ position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
+                        <Ballpit
+                            count={150}
+                            gravity={0.01}
+                            friction={0.9975}
+                            wallBounce={0.95}
+                            followCursor={true}
+                            ambientColor={0xffffff}
+                            ambientIntensity={0.5}
+                            lightIntensity={100}
+                            minSize={0.3}
+                            maxSize={0.8}
+                            size0={1.2}
+                            colors={[0x7c6fff, 0x5227ff, 0xff9ffc, 0xb19eef, 0xffffff]}
+                        />
+                    </div>
+                </div>
 
                 <style>{`@keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
 
