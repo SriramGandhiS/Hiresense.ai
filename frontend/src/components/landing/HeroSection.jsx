@@ -57,7 +57,7 @@ const HeroSection = () => {
                 <div className="absolute inset-0 z-0 opacity-80" style={{ pointerEvents: isAdminMode ? 'none' : 'auto' }}>
                     <div style={{ position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
                         <Ballpit
-                            count={150}
+                            count={75}
                             gravity={0.01}
                             friction={0.9975}
                             wallBounce={0.95}
