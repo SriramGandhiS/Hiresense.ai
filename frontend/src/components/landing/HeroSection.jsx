@@ -2,17 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
-import LiquidEther from '../reactbits/LiquidEther';
-import Silk from '../reactbits/Silk';
-import Prism from '../Prism';
-import LightPillar from '../LightPillar';
-import GradientText from '../reactbits/GradientText';
-import ShinyText from '../reactbits/ShinyText';
-import StarBorder from '../reactbits/StarBorder';
-import ClickSpark from '../reactbits/ClickSpark';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import CinematicLogin from '../CinematicLogin';
+import Ballpit from '../reactbits/Ballpit';
 
 const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
 
@@ -33,7 +25,8 @@ const HeroSection = () => {
         try {
             const res = await api.post('/auth/google', { credential: tokenResponse.access_token || tokenResponse.credential });
             setAuthData(res.data);
-            setIsCinematicActive(true); // Trigger animation ONLY after auth success
+            login(res.data.user, res.data.token);
+            navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Authentication Failed.');
         } finally { setLoading(false); }
@@ -44,72 +37,40 @@ const HeroSection = () => {
     const handleAdminLogin = async (e) => {
         e.preventDefault(); setLoading(true); setError('');
         try {
-            setIsCinematicActive(true);
             const res = await api.post('/auth/login', adminCreds);
             setAuthData(res.data);
+            login(res.data.user, res.data.token);
+            navigate('/dashboard');
         } catch (err) {
-            setIsCinematicActive(false);
             setError(err.response?.data?.message || 'Admin authentication failed.');
         } finally { setLoading(false); }
     };
-
-    useEffect(() => {
-        if (isAnimationFinished && authData) {
-            login(authData.user, authData.token);
-            navigate('/dashboard');
-        }
-    }, [isAnimationFinished, authData, login, navigate]);
 
     return (
         <ClickSpark sparkColor="#7c6fff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500} easing="ease-out" extraScale={1.2}>
             <section className="relative min-h-screen overflow-hidden bg-black flex flex-col">
 
-                {/* Background Layer: Silk + Prism + LightPillar */}
-                {!isCinematicActive && (
-                    <div className="absolute inset-0 z-0">
-                        {/* Base Silk Layer */}
-                        <div className="absolute inset-0 opacity-40">
-                            <Silk color="#110d24" speed={0.8} scale={0.6} noiseIntensity={1.2} />
-                        </div>
-
-                        {/* Prism Core */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-80 pointer-events-none">
-                            <Prism scale={3.2} glow={1.2} bloom={1.5} noise={0.4} timeScale={0.4} />
-                        </div>
-
-                        {/* Atmospheric Light Pillars */}
-                        <div className="absolute inset-x-0 top-0 h-2/3 pointer-events-none z-[1]">
-                            <LightPillar topColor="#5227FF" bottomColor="#000000" intensity={0.8} pillarWidth={4} pillarHeight={0.2} />
-                        </div>
-
-                        {/* Fluid Interaction (Optional, can keep for interactivity if not too heavy) */}
-                        <div className="absolute inset-0 opacity-20 mix-blend-screen overflow-hidden">
-                            <LiquidEther
-                                colors={['#5227FF', '#FF9FFC', '#B19EEF']}
-                                mouseForce={15} cursorSize={60} isViscous viscous={20}
-                                iterationsViscous={20} iterationsPoisson={20} resolution={0.3}
-                                autoDemo={true} autoSpeed={0.4}
-                            />
-                        </div>
+                {/* Background Layer: Ballpit */}
+                <div className="absolute inset-0 z-0 opacity-80" style={{ pointerEvents: isAdminMode ? 'none' : 'auto' }}>
+                    <div style={{ position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
+                        <Ballpit
+                            count={150}
+                            gravity={0.01}
+                            friction={0.9975}
+                            wallBounce={0.95}
+                            followCursor={true}
+                            ambientColor={0xffffff}
+                            ambientIntensity={0.5}
+                            lightIntensity={100}
+                            minSize={0.3}
+                            maxSize={0.8}
+                            size0={1.2}
+                            colors={[0x7c6fff, 0x5227ff, 0xff9ffc, 0xb19eef, 0xffffff]}
+                        />
                     </div>
-                )}
-
-                {/* Fluid background - Interaction Layer */}
-                {!isCinematicActive && (
-                    <div className="absolute inset-0 z-0">
-                        {/* We already have the background in the block above, so we keep only the interaction logic here if needed, or better yet, merged them. 
-                             Merging into the block above for clarity.
-                         */}
-                    </div>
-                )}
+                </div>
 
                 <style>{`@keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
-
-                <CinematicLogin
-                    isTriggered={isCinematicActive}
-                    onAnimationComplete={() => setIsAnimationFinished(true)}
-                    authReady={!!authData}
-                />
 
                 {/* ── HERO BODY ── */}
                 <div className={`relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-28 gap-0 transition-opacity duration-500 ${isCinematicActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
