@@ -3,6 +3,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Hyperspeed from '../components/reactbits/Hyperspeed';
 
 const Login = () => {
     const { login } = useAuth();
@@ -57,20 +58,27 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-[#f8fafc] relative overflow-hidden px-4">
-            <div className={`w-full max-w-md p-8 sm:p-12 bg-white rounded-[24px] shadow-soft border border-gray-100 text-center relative z-10 transition-all duration-500`}>
+        <div className="relative flex items-center justify-center min-h-screen bg-black overflow-hidden px-4">
+            {/* Background Layer: Hyperspeed */}
+            <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
+                <Hyperspeed
+                    effectOptions={{ "distortion": "turbulentDistortion", "length": 400, "roadWidth": 10, "islandWidth": 2, "lanesPerRoad": 3, "fov": 90, "fovSpeedUp": 150, "speedUp": 2, "carLightsFade": 0.4, "totalSideLightSticks": 20, "lightPairsPerRoadWay": 40, "shoulderLinesWidthPercentage": 0.05, "brokenLinesWidthPercentage": 0.1, "brokenLinesLengthPercentage": 0.5, "lightStickWidth": [0.12, 0.5], "lightStickHeight": [1.3, 1.7], "movingAwaySpeed": [60, 80], "movingCloserSpeed": [-120, -160], "carLightsLength": [12, 80], "carLightsRadius": [0.05, 0.14], "carWidthPercentage": [0.3, 0.5], "carShiftX": [-0.8, 0.8], "carFloorSeparation": [0, 5], "colors": { "roadColor": 526344, "islandColor": 657930, "background": 0, "shoulderLines": 1250072, "brokenLines": 1250072, "leftCars": [14177983, 6770850, 12732332], "rightCars": [242627, 941733, 3294549], "sticks": 242627 } }}
+                />
+            </div>
+
+            <div className={`w-full max-w-md p-8 sm:p-12 bg-black/60 backdrop-blur-xl rounded-[24px] shadow-2xl shadow-indigo-500/20 border border-white/10 text-center relative z-10 transition-all duration-500`}>
                 <div className="flex flex-col items-center justify-center space-y-4 mb-10">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-3xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">H</div>
                     <div className="flex flex-col">
-                        <span className="text-3xl font-black tracking-tight text-gray-900">
-                            hiresense<span className="text-indigo-600">.ai</span>
+                        <span className="text-3xl font-black tracking-tight text-white">
+                            hiresense<span className="text-indigo-500">.ai</span>
                         </span>
-                        <span className="text-[10px] text-gray-400 uppercase tracking-[0.4em] mt-1 font-bold">Authorized Access Intel</span>
+                        <span className="text-[10px] text-white/50 uppercase tracking-[0.4em] mt-1 font-bold">Authorized Access Intel</span>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-4 text-xs font-bold border border-red-100 bg-red-50 text-red-600 rounded-xl">
+                    <div className="mb-6 p-4 text-xs font-bold border border-red-500/30 bg-red-500/10 text-red-400 rounded-xl">
                         {error.toUpperCase()}
                     </div>
                 )}
@@ -82,7 +90,7 @@ const Login = () => {
                             disabled={loading}
                             className="w-full relative group transition-transform active:scale-95"
                         >
-                            <div className="flex items-center justify-center px-6 py-4 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+                            <div className="flex items-center justify-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white hover:bg-white/10 transition-colors shadow-sm">
                                 {loading ? (
                                     <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
                                 ) : (
@@ -100,13 +108,13 @@ const Login = () => {
                         </button>
 
                         <div className="relative py-2">
-                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
-                            <div className="relative flex justify-center text-[10px] uppercase tracking-widest"><span className="bg-white px-4 text-gray-400 font-bold">Secure Auth Gateway</span></div>
+                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+                            <div className="relative flex justify-center text-[10px] uppercase tracking-widest"><span className="bg-transparent px-4 text-white/40 font-bold backdrop-blur-xl">Secure Auth Gateway</span></div>
                         </div>
 
                         <button
                             onClick={() => setIsAdminMode(true)}
-                            className="text-[10px] font-bold text-gray-400 hover:text-indigo-600 transition-all uppercase tracking-widest"
+                            className="text-[10px] font-bold text-white/40 hover:text-indigo-400 transition-all uppercase tracking-widest"
                         >
                             Execute Terminal Override
                         </button>
@@ -114,24 +122,24 @@ const Login = () => {
                 ) : (
                     <form onSubmit={handleAdminLogin} className="space-y-6 text-left">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Access Token ID</label>
+                            <label className="text-[10px] font-bold text-white/60 uppercase tracking-widest ml-1">Access Token ID</label>
                             <input
                                 type="text"
                                 value={adminCreds.email}
                                 onChange={(e) => setAdminCreds({ ...adminCreds, email: e.target.value })}
                                 placeholder="root@hiresense.ai"
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900 text-sm focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20"
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Security Signature</label>
+                            <label className="text-[10px] font-bold text-white/60 uppercase tracking-widest ml-1">Security Signature</label>
                             <input
                                 type="password"
                                 value={adminCreds.password}
                                 onChange={(e) => setAdminCreds({ ...adminCreds, password: e.target.value })}
-                                placeholder="ΓÇóΓÇóΓÇóΓÇó"
-                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900 text-sm focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all"
+                                placeholder="••••"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20"
                                 required
                             />
                         </div>
@@ -146,7 +154,7 @@ const Login = () => {
                         <button
                             type="button"
                             onClick={() => setIsAdminMode(false)}
-                            className="w-full text-center text-[10px] font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors"
+                            className="w-full text-center text-[10px] font-bold text-white/40 hover:text-white/80 uppercase tracking-widest transition-colors"
                         >
                             Cancel Internal Access
                         </button>

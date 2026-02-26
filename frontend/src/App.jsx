@@ -32,7 +32,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Navigate to="/" replace />} />
+      <Route path="/login" element={<Login />} />
 
       {/* Protected Layout Routes */}
       <Route element={<ProtectedRoute />}>
