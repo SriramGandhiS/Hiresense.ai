@@ -4,6 +4,7 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Hyperspeed from '../components/reactbits/Hyperspeed';
+import ElectricBorder from '../components/reactbits/ElectricBorder';
 import TargetCursor from '../components/reactbits/TargetCursor';
 import GradientText from '../components/reactbits/GradientText';
 import RotatingText from '../components/reactbits/RotatingText';
