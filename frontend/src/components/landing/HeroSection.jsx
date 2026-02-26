@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import GradientText from '../reactbits/GradientText';
+import StarBorder from '../reactbits/StarBorder';
+import ClickSpark from '../reactbits/ClickSpark';
 const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
 
 const HeroSection = () => {
