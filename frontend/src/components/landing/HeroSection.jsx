@@ -8,6 +8,7 @@ import GradientText from '../reactbits/GradientText';
 import StarBorder from '../reactbits/StarBorder';
 import ClickSpark from '../reactbits/ClickSpark';
 import Ballpit from '../reactbits/Ballpit';
+import ShinyText from '../reactbits/ShinyText';
 const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
 
 const HeroSection = () => {
@@ -61,7 +62,7 @@ const HeroSection = () => {
                             gravity={0.01}
                             friction={0.9975}
                             wallBounce={0.95}
-                            followCursor={true}
+                            followCursor={false}
                             ambientColor={0xffffff}
                             ambientIntensity={0.5}
                             lightIntensity={100}
@@ -116,10 +117,13 @@ const HeroSection = () => {
                         <AnimatePresence mode="wait">
                             {!isAdminMode ? (
                                 <motion.div key="google" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex flex-col items-center gap-4">
-                                    <StarBorder as="div" color="#7c6fff" speed={isCinematicActive ? "0s" : "4s"} className="w-full">
-                                        <button onClick={() => loginWithGoogle()} disabled={loading} className="w-full text-[11px] tracking-[0.2em] font-black uppercase">
-                                            {loading ? 'Authenticating...' : 'Continue with Google'}
+                                    <StarBorder as="div" color="#7c6fff" speed={isCinematicActive ? "0s" : "4s"} className="w-full relative overflow-hidden group">
+                                        <button onClick={() => loginWithGoogle()} disabled={loading} className="w-full text-[11px] tracking-[0.2em] font-black uppercase relative z-10 transition-transform active:scale-95 flex items-center justify-center">
+                                            {loading ? 'Authenticating...' : (
+                                                <ShinyText text="Continue with Google" disabled={false} speed={3} className="text-white hover:text-[#FF9FFC] transition-colors duration-300" />
+                                            )}
                                         </button>
+                                        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full blur-md"></div>
                                     </StarBorder>
 
                                     <div className="flex items-center gap-3 w-full">
