@@ -58,15 +58,15 @@ const Login = () => {
     };
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-black overflow-hidden px-4">
+        <div className="relative flex items-center justify-center min-h-screen bg-transparent overflow-hidden px-4">
             {/* Background Layer: Hyperspeed */}
-            <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
+            <div className="absolute inset-0 z-0 opacity-100 pointer-events-none">
                 <Hyperspeed
-                    effectOptions={{ "distortion": "turbulentDistortion", "length": 400, "roadWidth": 10, "islandWidth": 2, "lanesPerRoad": 3, "fov": 90, "fovSpeedUp": 150, "speedUp": 2, "carLightsFade": 0.4, "totalSideLightSticks": 20, "lightPairsPerRoadWay": 40, "shoulderLinesWidthPercentage": 0.05, "brokenLinesWidthPercentage": 0.1, "brokenLinesLengthPercentage": 0.5, "lightStickWidth": [0.12, 0.5], "lightStickHeight": [1.3, 1.7], "movingAwaySpeed": [60, 80], "movingCloserSpeed": [-120, -160], "carLightsLength": [12, 80], "carLightsRadius": [0.05, 0.14], "carWidthPercentage": [0.3, 0.5], "carShiftX": [-0.8, 0.8], "carFloorSeparation": [0, 5], "colors": { "roadColor": 526344, "islandColor": 657930, "background": 0, "shoulderLines": 1250072, "brokenLines": 1250072, "leftCars": [14177983, 6770850, 12732332], "rightCars": [242627, 941733, 3294549], "sticks": 242627 } }}
+                    effectOptions={{ "distortion": "turbulentDistortion", "length": 400, "roadWidth": 14, "islandWidth": 3, "lanesPerRoad": 4, "fov": 100, "fovSpeedUp": 160, "speedUp": 3.5, "carLightsFade": 0.4, "totalSideLightSticks": 40, "lightPairsPerRoadWay": 60, "shoulderLinesWidthPercentage": 0.05, "brokenLinesWidthPercentage": 0.1, "brokenLinesLengthPercentage": 0.5, "lightStickWidth": [0.2, 0.8], "lightStickHeight": [2.0, 2.5], "movingAwaySpeed": [80, 110], "movingCloserSpeed": [-150, -200], "carLightsLength": [25, 100], "carLightsRadius": [0.08, 0.2], "carWidthPercentage": [0.3, 0.5], "carShiftX": [-0.8, 0.8], "carFloorSeparation": [0, 5], "colors": { "roadColor": 526344, "islandColor": 657930, "background": 0, "shoulderLines": 1250072, "brokenLines": 1250072, "leftCars": [14177983, 6770850, 12732332], "rightCars": [242627, 941733, 3294549], "sticks": 242627 } }}
                 />
             </div>
 
-            <div className={`w-full max-w-md p-8 sm:p-12 bg-black/60 backdrop-blur-xl rounded-[24px] shadow-2xl shadow-indigo-500/20 border border-white/10 text-center relative z-10 transition-all duration-500`}>
+            <div className={`w-full max-w-md p-8 sm:p-12 bg-transparent backdrop-blur-md rounded-[24px] shadow-2xl shadow-indigo-500/10 border border-white/5 text-center relative z-10 transition-all duration-500`}>
                 <div className="flex flex-col items-center justify-center space-y-4 mb-10">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-3xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">H</div>
                     <div className="flex flex-col">
