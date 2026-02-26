@@ -4,10 +4,9 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Hyperspeed from '../components/reactbits/Hyperspeed';
-import ElectricBorder from '../components/reactbits/ElectricBorder';
 import TargetCursor from '../components/reactbits/TargetCursor';
-import ShinyText from '../components/reactbits/ShinyText';
 import GradientText from '../components/reactbits/GradientText';
+import RotatingText from '../components/reactbits/RotatingText';
 
 const Login = () => {
     const { login } = useAuth();
@@ -87,10 +86,20 @@ const Login = () => {
                     <div className="flex flex-col items-center justify-center space-y-4 mb-10">
                         <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-3xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">H</div>
                         <div className="flex flex-col">
-                            <span className="text-3xl font-black tracking-tight text-white">
-                                hiresense<span className="text-indigo-500">.ai</span>
+                            <span className="text-3xl font-black tracking-tight text-white mb-2">
+                                <RotatingText
+                                    texts={['hiresense.ai', 'Authorized', 'Access', 'Intel']}
+                                    mainClassName="px-2 sm:px-2 md:px-3 bg-cyan-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg"
+                                    staggerFrom={"last"}
+                                    initial={{ y: "100%" }}
+                                    animate={{ y: 0 }}
+                                    exit={{ y: "-120%" }}
+                                    staggerDuration={0.025}
+                                    splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                                    rotationInterval={2000}
+                                />
                             </span>
-                            <span className="text-[10px] text-white/50 uppercase tracking-[0.4em] mt-1 font-bold">Authorized Access Intel</span>
                         </div>
                     </div>
 
@@ -118,14 +127,9 @@ const Login = () => {
                                                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                                                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                                             </svg>
-                                            <div className="relative inline-flex items-center justify-center">
-                                                <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={8} showBorder={false}>
-                                                    Log In with Google
-                                                </GradientText>
-                                                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                                                    <ShinyText text="Log In with Google" speed={3} color="transparent" shineColor="#ffffff" />
-                                                </div>
-                                            </div>
+                                            <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={8} showBorder={false}>
+                                                Log In with Google
+                                            </GradientText>
                                         </>
                                     )}
                                 </div>
@@ -173,14 +177,9 @@ const Login = () => {
                                 className="w-full bg-indigo-600 text-white py-4 rounded-xl flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 cursor-target"
                             >
                                 {loading ? 'Authenticating...' : (
-                                    <div className="relative inline-flex items-center justify-center">
-                                        <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={8} showBorder={false}>
-                                            Establish Override
-                                        </GradientText>
-                                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                                            <ShinyText text="Establish Override" speed={3} color="transparent" shineColor="#ffffff" />
-                                        </div>
-                                    </div>
+                                    <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={8} showBorder={false}>
+                                        Establish Override
+                                    </GradientText>
                                 )}
                             </button>
 
