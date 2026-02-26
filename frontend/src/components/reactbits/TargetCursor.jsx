@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { gsap } from 'gsap';
+import GradientText from './GradientText';
 import './TargetCursor.css';
 
 const TargetCursor = ({
@@ -319,6 +320,11 @@ const TargetCursor = ({
 
     return (
         <div ref={cursorRef} className="target-cursor-wrapper">
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap">
+                <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={4} className="text-[10px] uppercase font-bold tracking-[0.3em] opacity-80">
+                    TARGET
+                </GradientText>
+            </div>
             <div ref={dotRef} className="target-cursor-dot" />
             <div className="target-cursor-corner corner-tl" />
             <div className="target-cursor-corner corner-tr" />

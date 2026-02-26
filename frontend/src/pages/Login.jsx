@@ -7,6 +7,7 @@ import Hyperspeed from '../components/reactbits/Hyperspeed';
 import ElectricBorder from '../components/reactbits/ElectricBorder';
 import TargetCursor from '../components/reactbits/TargetCursor';
 import ShinyText from '../components/reactbits/ShinyText';
+import GradientText from '../components/reactbits/GradientText';
 
 const Login = () => {
     const { login } = useAuth();
@@ -117,7 +118,14 @@ const Login = () => {
                                                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                                                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                                             </svg>
-                                            <ShinyText text="Log In with Google" speed={3} color="#b5b5b5" shineColor="#ffffff" />
+                                            <div className="relative inline-flex items-center justify-center">
+                                                <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={8} showBorder={false}>
+                                                    Log In with Google
+                                                </GradientText>
+                                                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                                    <ShinyText text="Log In with Google" speed={3} color="transparent" shineColor="#ffffff" />
+                                                </div>
+                                            </div>
                                         </>
                                     )}
                                 </div>
@@ -164,7 +172,16 @@ const Login = () => {
                                 disabled={loading}
                                 className="w-full bg-indigo-600 text-white py-4 rounded-xl flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 cursor-target"
                             >
-                                {loading ? 'Authenticating...' : <ShinyText text="Establish Override" speed={3} color="#b5b5b5" shineColor="#ffffff" />}
+                                {loading ? 'Authenticating...' : (
+                                    <div className="relative inline-flex items-center justify-center">
+                                        <GradientText colors={["#5227FF", "#FF9FFC", "#B19EEF"]} animationSpeed={8} showBorder={false}>
+                                            Establish Override
+                                        </GradientText>
+                                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                            <ShinyText text="Establish Override" speed={3} color="transparent" shineColor="#ffffff" />
+                                        </div>
+                                    </div>
+                                )}
                             </button>
 
                             <button
