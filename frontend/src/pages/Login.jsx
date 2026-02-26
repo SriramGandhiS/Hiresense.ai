@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Hyperspeed from '../components/reactbits/Hyperspeed';
 import ElectricBorder from '../components/reactbits/ElectricBorder';
+import TargetCursor from '../components/reactbits/TargetCursor';
 
 const Login = () => {
     const { login } = useAuth();
@@ -60,6 +61,12 @@ const Login = () => {
 
     return (
         <div className="relative flex items-center justify-center min-h-screen bg-transparent overflow-hidden px-4">
+            <TargetCursor
+                spinDuration={2}
+                hideDefaultCursor
+                parallaxOn
+                hoverDuration={0.2}
+            />
             {/* Background Layer: Hyperspeed */}
             <div className="absolute inset-0 z-0 opacity-100 pointer-events-none">
                 <Hyperspeed
@@ -96,9 +103,9 @@ const Login = () => {
                             <button
                                 onClick={() => loginWithGoogle()}
                                 disabled={loading}
-                                className="w-full relative group transition-transform active:scale-95"
+                                className="w-full relative group transition-transform active:scale-95 cursor-target"
                             >
-                                <div className="flex items-center justify-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white hover:bg-white/10 transition-colors shadow-sm">
+                                <div className="flex items-center justify-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white hover:bg-white/10 transition-colors shadow-sm cursor-target">
                                     {loading ? (
                                         <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
                                     ) : (
@@ -122,7 +129,7 @@ const Login = () => {
 
                             <button
                                 onClick={() => setIsAdminMode(true)}
-                                className="text-[10px] font-bold text-white/40 hover:text-indigo-400 transition-all uppercase tracking-widest"
+                                className="text-[10px] font-bold text-white/40 hover:text-indigo-400 transition-all uppercase tracking-widest cursor-target"
                             >
                                 Execute Terminal Override
                             </button>
@@ -136,7 +143,7 @@ const Login = () => {
                                     value={adminCreds.email}
                                     onChange={(e) => setAdminCreds({ ...adminCreds, email: e.target.value })}
                                     placeholder="root@hiresense.ai"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20 cursor-target"
                                     required
                                 />
                             </div>
@@ -147,14 +154,14 @@ const Login = () => {
                                     value={adminCreds.password}
                                     onChange={(e) => setAdminCreds({ ...adminCreds, password: e.target.value })}
                                     placeholder="••••"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-white/20 cursor-target"
                                     required
                                 />
                             </div>
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-indigo-600 text-white py-4 rounded-xl flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50"
+                                className="w-full bg-indigo-600 text-white py-4 rounded-xl flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50 cursor-target"
                             >
                                 {loading ? 'Authenticating...' : 'Establish Override'}
                             </button>
@@ -162,7 +169,7 @@ const Login = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsAdminMode(false)}
-                                className="w-full text-center text-[10px] font-bold text-white/40 hover:text-white/80 uppercase tracking-widest transition-colors"
+                                className="w-full text-center text-[10px] font-bold text-white/40 hover:text-white/80 uppercase tracking-widest transition-colors cursor-target"
                             >
                                 Cancel Internal Access
                             </button>
