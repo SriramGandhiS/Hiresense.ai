@@ -3,7 +3,6 @@ import { useGoogleLogin } from '@react-oauth/google';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import CinematicLogin from '../components/CinematicLogin';
 
 const Login = () => {
     const { login } = useAuth();
@@ -20,13 +19,13 @@ const Login = () => {
         setLoading(true);
         setError('');
         try {
-            setIsCinematicActive(true);
             const res = await api.post('/auth/google', {
                 credential: tokenResponse.access_token || tokenResponse.credential
             });
             setAuthData(res.data);
+            login(res.data.user, res.data.token);
+            navigate('/dashboard');
         } catch (err) {
-            setIsCinematicActive(false);
             setError(err.response?.data?.message || 'Authentication Failed.');
             console.error('Login Error:', err);
         } finally {
@@ -34,16 +33,7 @@ const Login = () => {
         }
     };
 
-    useEffect(() => {
-        if (isAnimationFinished && authData) {
-            login(authData.user, authData.token);
-            navigate('/dashboard');
-        }
-    }, [isAnimationFinished, authData, login, navigate]);
 
-    const handleAnimationComplete = () => {
-        setIsAnimationFinished(true);
-    };
 
     const loginWithGoogle = useGoogleLogin({
         onSuccess: handleGoogleSuccess,
@@ -55,11 +45,11 @@ const Login = () => {
         setLoading(true);
         setError('');
         try {
-            setIsCinematicActive(true);
             const res = await api.post('/auth/login', adminCreds);
             setAuthData(res.data);
+            login(res.data.user, res.data.token);
+            navigate('/dashboard');
         } catch (err) {
-            setIsCinematicActive(false);
             setError(err.response?.data?.message || 'Admin authentication failed.');
         } finally {
             setLoading(false);
@@ -68,13 +58,7 @@ const Login = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#f8fafc] relative overflow-hidden px-4">
-            <CinematicLogin
-                isTriggered={isCinematicActive}
-                onAnimationComplete={handleAnimationComplete}
-                authReady={!!authData}
-            />
-
-            <div className={`w-full max-w-md p-8 sm:p-12 bg-white rounded-[24px] shadow-soft border border-gray-100 text-center relative z-10 transition-all duration-500 ${isCinematicActive ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+            <div className={`w-full max-w-md p-8 sm:p-12 bg-white rounded-[24px] shadow-soft border border-gray-100 text-center relative z-10 transition-all duration-500`}>
                 <div className="flex flex-col items-center justify-center space-y-4 mb-10">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-3xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">H</div>
                     <div className="flex flex-col">
