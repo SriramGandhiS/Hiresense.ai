@@ -84,7 +84,7 @@ const analyzeResume = async (text, fileData = null) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const promptText = `
         You are an elite industrial ATS Auditor and Career Coach. Analyze the provided resume with extreme precision.
@@ -157,7 +157,7 @@ const extractStructuredData = async (text) => {
         if (!process.env.GEMINI_API_KEY) return { name: "Guest User", role: "Developer", skills: [], experience: [], education: [] };
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const promptText = `Extract resume data into JSON: { name, role, email, phone, summary, skills: [], experience: [], education: [] }. Text: ${text}`;
         const result = await model.generateContent(promptText);

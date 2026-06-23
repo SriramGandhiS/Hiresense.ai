@@ -1,48 +1,27 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { googleLogout } from '@react-oauth/google';
+import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
+// Since login is temporarily removed, we use a permanent guest session.
+// All features are accessible without authentication.
+const GUEST_USER = {
+    name: 'Guest User',
+    email: 'guest@hiresense.ai',
+    avatar: 'G',
+};
+
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-
-        if (token && savedUser) {
-            try {
-                setUser(JSON.parse(savedUser));
-            } catch (error) {
-                console.error('Error parsing user data:', error);
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-            }
-        }
-        setLoading(false);
-    }, []);
-
-    const login = (userData, token) => {
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-    };
+    const [user] = useState(GUEST_USER);
 
     const logout = () => {
-        googleLogout();
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
+        // No-op for now since auth is disabled
         window.location.href = '/';
     };
 
-    if (loading) return null;
-
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, logout }}>
             {children}
         </AuthContext.Provider>
     );

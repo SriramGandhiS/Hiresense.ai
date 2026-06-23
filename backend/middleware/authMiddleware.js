@@ -1,46 +1,54 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+/**
+ * protect middleware
+ *
+ * Permissive auth: if a valid JWT is present, decode it and attach the real user.
+ * For any other case (no token, invalid token, user not found) — attach a default
+ * guest user and call next(). Nothing is ever blocked.
+ */
 const protect = async (req, res, next) => {
-    let token;
+    const GUEST_USER = {
+        _id: '507f1f77bcf86cd799439011',
+        name: 'Guest',
+        email: 'guest@hiresense.ai',
+    };
 
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        try {
-            token = req.headers.authorization.split(' ')[1];
+    // No authorization header at all — grant guest access immediately
+    if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer')) {
+        req.user = GUEST_USER;
+        return next();
+    }
 
-            // Special handling for Guest Session (Accept multiple variants for transition safety)
-            if (token === 'guest_token_123' || token === 'guest-bypass-token-777') {
-                console.log('[AuthMiddleware] Guest Access Granted via Token:', token);
-                req.user = {
-                    _id: '65e0f0f0f0f0f0f0f0f0f0f0',
-                    name: 'Guest User',
-                    email: 'guest@hiresense.ai'
-                };
-                return next();
-            }
+    const token = req.headers.authorization.split(' ')[1];
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
-            req.user = await User.findById(decoded.id).select('-googleId -__v');
+    // Handle known guest bypass tokens
+    if (!token || token === 'guest_token_123' || token === 'guest-bypass-token-777') {
+        console.log('[AuthMiddleware] Guest access granted via token:', token || '(empty)');
+        req.user = GUEST_USER;
+        return next();
+    }
 
-            if (!req.user && token !== 'guest_token_123') {
-                // If user not found in DB, still allow if it was a valid token (e.g. newly created)
-                // or return error. For now, let's just make sure it doesn't crash.
-                return res.status(401).json({ message: 'User not found' });
-            }
+    // Attempt to verify as a real JWT
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        const dbUser = await User.findById(decoded.id).select('-googleId -__v');
 
-            next();
-        } catch (error) {
-            console.error('Auth Error:', error.message);
-            res.status(401).json({ message: 'Not authorized, token failed' });
+        if (dbUser) {
+            req.user = dbUser;
+        } else {
+            // Valid token but user deleted — fall back to guest
+            console.warn('[AuthMiddleware] User not found in DB, falling back to guest.');
+            req.user = GUEST_USER;
         }
+    } catch (err) {
+        // Invalid / expired token — fall back to guest instead of blocking
+        console.warn('[AuthMiddleware] Token verification failed, falling back to guest:', err.message);
+        req.user = GUEST_USER;
     }
 
-    if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
-    }
+    return next();
 };
 
 module.exports = { protect };

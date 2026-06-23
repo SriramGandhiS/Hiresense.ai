@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UploadCloud, FileText, CheckCircle2, AlertCircle, X, Sparkles, ArrowRight } from 'lucide-react';
 import api from '../services/api';
 import ResumeScoreCard from '../components/ResumeScoreCard';

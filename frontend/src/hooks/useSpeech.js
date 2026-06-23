@@ -16,13 +16,16 @@ export const useSpeech = () => {
         }
 
         const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
+        recognition.continuous = false; // Disable continuous to avoid duplex connection drops
+        recognition.interimResults = false; // Disable interim updates to reduce massive network load
         recognition.lang = 'en-US';
 
         recognition.onstart = () => setIsListening(true);
         recognition.onend = () => setIsListening(false);
-        recognition.onerror = (event) => setError(event.error);
+        recognition.onerror = (event) => {
+            console.error('[SpeechRecognition Error]', event.error);
+            setError(event.error);
+        };
 
         recognition.onresult = (event) => {
             let currentTranscript = '';
@@ -32,7 +35,7 @@ export const useSpeech = () => {
                 }
             }
             if (currentTranscript) {
-                setTranscript(prev => prev + ' ' + currentTranscript);
+                setTranscript(prev => (prev ? prev + ' ' + currentTranscript.trim() : currentTranscript.trim()));
             }
         };
 
